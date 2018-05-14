@@ -34,8 +34,24 @@ export default class Dashboard extends React.Component {
 
   handleLaunchEvent(target) {
     console.log(`***** target: ${target}`);
+    if (this.state.messageBody.length === 0) {
+      return;
+    }
 
-    this.getDidAsync().then(did=>{
+    switch(target) {
+      case targets.METAMASK:
+          this.signWithMetamask(this.state.messageBody);
+          break;
+      case targets.IXO_CM:
+          alert('Going to sign with IXO CM.');
+          break;
+      default:
+        alert('Unknown action requested.');
+    }    
+  }
+
+  signWithMetamask(message) {
+    this.getDidAsyncFromMetamask().then(did=>{
       const eth = new Eth(web3.currentProvider);
 
       // var toSend = JSON.stringify(payload);
@@ -47,10 +63,11 @@ export default class Dashboard extends React.Component {
           });
     }, error=>{
       console.error(`ERROR error: ${error}`);
+      alert(error);
     });
   }
 
-  getDidAsync() {
+  getDidAsyncFromMetamask() {
     return new Promise((resolve, reject)=>{
       web3.eth.getAccounts(function (error, accounts) {
         if (error) {
