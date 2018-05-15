@@ -1,10 +1,8 @@
 import React from 'react';
 import Launchbutton from './launch-button';
+import Web3 from 'web3';
 
-const Eth = require('ethjs-query');
-var Web3 = require('web3');
-var web3Metamask = null;
-var web3Ixo = null;
+let web3 = null; // Will hold the web3 instance
 
 var targets = {
   METAMASK: 0,
@@ -21,21 +19,19 @@ export default class Dashboard extends React.Component {
     this.handleMessageBodyChanged = this.handleMessageBodyChanged.bind(this);
 
     //init web3 for Metamask
-    if (typeof window.web3 !== 'undefined' && typeof window.web3.currentProvider !== 'undefined') {
-      web3Metamask = new Web3(window.web3.currentProvider);
-    } else {    
-      console.error('No web3 provider for Metamask found. Please install Metamask in your browser.');
-      alert('No web3 provider for Metamask found. Please install Metamask in your browser.');
+    if (!window.web3) {
+      window.alert('Please install MetaMask first.');
+      return;
     }
-
-    //init web3 for IxoCM
-    if (typeof window.web3Ixo !== 'undefined' && typeof window.web3Ixo.currentProvider !== 'undefined') {
-      web3Ixo = new Web3(window.web3Ixo.currentProvider);
-    } else {    
-      console.error('No web3 provider for IXO Credential Manager found. Please install IXO Credential Manager in your browser.');
-      alert('No web3 provider for IXO Credential Manager found. Please install IXO Credential Manager in your browser.');
+    if (!web3) {
+      // We don't know window.web3 version, so we use our own instance of web3
+      // with provider given by window.web3
+      web3 = new Web3(window.web3.currentProvider);
     }
-    debugger;
+    // if (!web3.eth.coinbase) {
+    //   window.alert('Please activate MetaMask first.');
+    //   return;
+    // }
   }
 
   handleMessageBodyChanged(e) {
@@ -43,61 +39,57 @@ export default class Dashboard extends React.Component {
   }
 
   handleLaunchEvent(target) {
-    console.log(`***** target: ${target}`);
+    // console.log(`***** target: ${target}`);
     if (this.state.messageBody.length === 0) {
       return;
     }
 
-    switch(target) {
-      case targets.METAMASK:
-          this.signWithMetamask(this.state.messageBody);
-          break;
-      case targets.IXO_CM:
-          this.signWithIxoCM(this.state.messageBody);
-          break;
-      default:
-        alert('Unknown action requested.');
-    }    
+    this.signWithMetamask(this.state.messageBody);
   }
 
-  signWithIxoCM(message) {
-    this.getDidAsyncFromIxoCM().then(did=>{
-      console.log(`IxoCM -> DID: ${did}`);
-    });
-  }
+  // var data = '0x' + new Buffer(this.state.messageBody).toString('hex');
+  // toHex(text) {
+  //   var hex = '';
+  //   for(var i=0;i<text.length;i++) { hex += ''+text.charCodeAt(i).toString(16); }
+  //   return `0x${hex}`;
+  // }
 
   signWithMetamask(message) {
     this.getDidAsyncFromMetamask().then(did=>{
       console.log(`Metamask -> DID: ${did}`);
-      const eth = new Eth(web3Metamask.currentProvider);
 
-      // var toSend = JSON.stringify(payload);
-      var msg = '0x' + new Buffer(this.state.messageBody).toString('hex');
+      var data = '0x' + new Buffer(message).toString('hex');
+      web3.eth.personal.sign(data, did, "test password!")
+      .then(console.log);
 
-      eth.personal_sign(msg, did)
-          .then((signature) => {
-            console.log(`SUCCESS signature: ${signature}`);
-          });
-    }, error=>{
-      console.error(`ERROR error: ${error}`);
-      alert(error);
+      // web3.eth.personal.sign(
+      //   web3.fromUtf8(message),
+      //   did,
+      //   (err, signature) => {
+      //     if (err) {
+      //       console.error(`err: ${err}`);
+      //       return;
+      //     }
+      //     console.log(`signature: ${signature}`);
+      //   }
+      // );
     });
   }
 
-  getDidAsyncFromIxoCM() {
-    return new Promise((resolve, reject)=>{
-      web3Ixo.eth.getAccounts(function (error, accounts) {
-        if (error) {
-          reject(error);
-        }
-        resolve(accounts[0]);
-      });
-    });
-  }
+  // getDidAsyncFromIxoCM() {
+  //   return new Promise((resolve, reject)=>{
+  //     web3Ixo.eth.getAccounts(function (error, accounts) {
+  //       if (error) {
+  //         reject(error);
+  //       }
+  //       resolve(accounts[0]);
+  //     });
+  //   });
+  // }
 
   getDidAsyncFromMetamask() {
     return new Promise((resolve, reject)=>{
-      web3Metamask.eth.getAccounts(function (error, accounts) {
+      web3.eth.getAccounts(function (error, accounts) {
         if (error) {
           reject(error);
         }
@@ -113,13 +105,7 @@ export default class Dashboard extends React.Component {
         <Launchbutton
           event={targets.METAMASK}
           title="Metamask" 
-          handleLaunchEvent={this.handleLaunchEvent}/>
-
-        <Launchbutton 
-          event={targets.IXO_CM}
-          title="Ixo CM" 
-          handleLaunchEvent={this.handleLaunchEvent}/>
-          
+          handleLaunchEvent={this.handleLaunchEvent}/>          
       </div>      
   );
   }
