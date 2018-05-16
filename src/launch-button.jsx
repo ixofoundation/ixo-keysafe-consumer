@@ -7,7 +7,7 @@ export default class Launchbutton extends React.Component {
     }
   
     handleClick(e) {
-        this.props.handleLaunchEvent(this.props.event);
+        this.props.handleLaunchEvent(this.props.provider);
     }
   
     render() {
