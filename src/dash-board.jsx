@@ -7,7 +7,9 @@ export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {messageBody: ''};
+    this.registerContentscriptEventListener()
+
+    this.state = {messageBody: ''}
 
     this.blockchainProviders = {
       web3Metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
@@ -18,7 +20,7 @@ export default class Dashboard extends React.Component {
     this.handleExtensionLaunch = this.handleExtensionLaunch.bind(this);
     this.handleMessageBodyChanged = this.handleMessageBodyChanged.bind(this);
     this.getEthereumAddressAsync = this.getEthereumAddressAsync.bind(this);
-    this.getIxoDidAsync = this.getIxoDidAsync.bind(this);
+    this.handleIxoDidClick = this.handleIxoDidClick.bind(this)
 
     if (this.blockchainProviders.web3Metamask.doShow) {
       this.initWeb3Provider(this.blockchainProviders.web3Metamask);
@@ -59,12 +61,47 @@ export default class Dashboard extends React.Component {
     this.signMessageWithProvider(this.state.messageBody, blockchainProvider);
   }
 
+  handleIxoDidClick (e) {
+    this.requestDidFromIxoCM()
+  }
+
+  registerContentscriptEventListener () {
+    window.addEventListener("message", function(event) {
+      if (event.source === window &&
+          event.data.origin &&
+          event.data.origin === "ixo-cm") {
+            const reply = event.data
+            console.log(`!!!webpage received reply: ${JSON.stringify(reply)}`)
+            alert(`Page script received reply:  ${JSON.stringify(reply)}`)
+      }
+    });
+  }
+
+  postMessageToContentscript (method, data = null) {
+    window.postMessage({
+      origin: 'ixo-dapp',
+      message: {method, data}
+    }, "*");
+  }
+
+  requestMessageSigningFromIxoCM (data) {
+    const method = 'ixo-sign'
+    this.postMessageToContentscript(method, data)
+  }
+
+  requestDidFromIxoCM () {
+    const method = 'ixo-did'
+    this.postMessageToContentscript(method)
+  }
+
   signMessageWithProvider(message, blockchainProvider) {
+    // default to Ethereum address retrieval
     var getAddress = this.getEthereumAddressAsync;
     if (blockchainProvider.id === this.blockchainProviders.web3Ixo.id) {
-      getAddress = this.getIxoDidAsync;
+      
+      this.requestMessageSigningFromIxoCM(message)
+      return
     }
-
     getAddress().then(address=>{
       console.log(`${blockchainProvider.extension} -> Address: ${address}`);
 
@@ -75,25 +112,6 @@ export default class Dashboard extends React.Component {
       .then(console.log);
     });
   
-  }
-
-
-  // getIxoDidAsync() {
-  //   return new Promise((resolve, reject)=>{
-  //     resolve(this.blockchainProviders.web3Ixo.provider.debug());
-  //   });
-  // }
-  getIxoDidAsync() {
-    const eth = this.blockchainProviders.web3Ixo.provider.eth;
-    return new Promise((resolve, reject)=>{
-      // resolve(provider.debug());
-      eth.getAccounts(function (error, accounts) {
-        if (error || 0 === accounts.length) {
-          reject(error);
-        }
-        resolve(accounts[0]);
-      });
-    });
   }
 
   getEthereumAddressAsync() {
@@ -112,18 +130,19 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
+        <button onClick={this.handleIxoDidClick}>IXO DID</button>
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
-        {this.blockchainProviders.web3Metamask.doShow && 
-          <Launchbutton
-            provider={this.blockchainProviders.web3Metamask.id}
-            title="Metamask" 
-            handleLaunchEvent={this.handleExtensionLaunch}/>
-        }
         {this.blockchainProviders.web3Ixo.doShow && 
           <Launchbutton
             provider={this.blockchainProviders.web3Ixo.id}
-            title="IXO CM" 
+            title="IXO-CM Sign" 
             handleLaunchEvent={this.handleExtensionLaunch}/>          
+        }
+        {this.blockchainProviders.web3Metamask.doShow && 
+          <Launchbutton
+            provider={this.blockchainProviders.web3Metamask.id}
+            title="Metamask Sign" 
+            handleLaunchEvent={this.handleExtensionLaunch}/>
         }
       </div>      
   );
