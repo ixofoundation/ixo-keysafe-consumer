@@ -21,6 +21,7 @@ export default class Dashboard extends React.Component {
     this.handleMessageBodyChanged = this.handleMessageBodyChanged.bind(this);
     this.getEthereumAddressAsync = this.getEthereumAddressAsync.bind(this);
     this.handleIxoDidClick = this.handleIxoDidClick.bind(this)
+    this.handleIxoInfoClick = this.handleIxoInfoClick.bind(this)
 
     if (this.blockchainProviders.web3Metamask.doShow) {
       this.initWeb3Provider(this.blockchainProviders.web3Metamask);
@@ -65,6 +66,10 @@ export default class Dashboard extends React.Component {
     this.requestDidFromIxoCM()
   }
 
+  handleIxoInfoClick (e) {
+    this.requestInfoFromIxoCM()
+  }
+
   registerContentscriptEventListener () {
     window.addEventListener("message", function(event) {
       if (event.source === window &&
@@ -90,8 +95,13 @@ export default class Dashboard extends React.Component {
   }
 
   requestDidFromIxoCM () {
-    const method = 'ixo-did'
+    const method = 'ixo-didi'
     this.postMessageToContentscript(method)
+  }
+
+  requestInfoFromIxoCM () {
+    const method = 'ixo-info'
+    this.postMessageToContentscript(method)    
   }
 
   signMessageWithProvider(message, blockchainProvider) {
@@ -131,6 +141,7 @@ export default class Dashboard extends React.Component {
     return (
       <div>
         <button onClick={this.handleIxoDidClick}>IXO DID</button>
+        <button onClick={this.handleIxoInfoClick}>IXO INFO</button>
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
         {this.blockchainProviders.web3Ixo.doShow && 
           <Launchbutton
