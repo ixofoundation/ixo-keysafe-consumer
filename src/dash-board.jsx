@@ -10,21 +10,21 @@ export default class Dashboard extends React.Component {
     this.state = {messageBody: ''}
 
     this.blockchainProviders = {
-      web3Metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
-      web3Ixo: {id: 1, doShow: true, windowKey: "web3Ixo", extension: "IXO Credential Manager", provider: null}
+      metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
+      ixo_credential_manager: {id: 1, doShow: true, windowKey: "ixoCm", extension: "IXO Credential Manager", provider: null}
     };
 
     // This binding is necessary to make `this` work in the callback
     this.handleExtensionLaunch = this.handleExtensionLaunch.bind(this);
     this.handleMessageBodyChanged = this.handleMessageBodyChanged.bind(this);
     this.getEthereumAddressAsync = this.getEthereumAddressAsync.bind(this);
-    this.handleIxoInfoClick = this.handleIxoInfoClick.bind(this)
+    this.requestInfoFromIxoCM = this.requestInfoFromIxoCM.bind(this)
 
-    if (this.blockchainProviders.web3Metamask.doShow) {
-      this.initWeb3Provider(this.blockchainProviders.web3Metamask);
+    if (this.blockchainProviders.metamask.doShow) {
+      this.initWeb3Provider(this.blockchainProviders.metamask);
     }
-    if (this.blockchainProviders.web3Ixo.doShow) {
-      this.initWeb3Provider(this.blockchainProviders.web3Ixo);
+    if (this.blockchainProviders.ixo_credential_manager.doShow) {
+      this.initWeb3Provider(this.blockchainProviders.ixo_credential_manager);
     }
   }
 
@@ -34,9 +34,9 @@ export default class Dashboard extends React.Component {
       window.alert(`Please install ${blockchainProvider.extension} first.`);
     } else {
       if (!blockchainProvider.provider) {
-        if (blockchainProvider.id === this.blockchainProviders.web3Metamask.id) {
+        if (blockchainProvider.id === this.blockchainProviders.metamask.id) {
           blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
-        } else if (blockchainProvider.id === this.blockchainProviders.web3Ixo.id) {
+        } else if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
           // blockchainProvider.provider = window[blockchainProvider.windowKey].currentProvider;
           blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
         }
@@ -55,7 +55,7 @@ export default class Dashboard extends React.Component {
       return;
     }
     
-    const blockchainProvider = (providerId === this.blockchainProviders.web3Metamask.id)?this.blockchainProviders.web3Metamask:this.blockchainProviders.web3Ixo;
+    const blockchainProvider = (providerId === this.blockchainProviders.metamask.id)?this.blockchainProviders.metamask:this.blockchainProviders.ixo_credential_manager;
     this.signMessageWithProvider(this.state.messageBody, blockchainProvider);
   }
 
@@ -75,33 +75,31 @@ export default class Dashboard extends React.Component {
     this.postMessageToContentscript(method, data)
   }
 
-  requestInfoFromIxoCM () {
+  requestInfoFromIxoCM (e) {
     const method = 'ixo-info'
     this.postMessageToContentscript(method)    
   }
 
   signMessageWithProvider(message, blockchainProvider) {
-    // default to Ethereum address retrieval
-    var getAddress = this.getEthereumAddressAsync;
-    if (blockchainProvider.id === this.blockchainProviders.web3Ixo.id) {
+    if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
       
       this.requestMessageSigningFromIxoCM(message)
       return
-    }
-    getAddress().then(address=>{
-      console.log(`${blockchainProvider.extension} -> Address: ${address}`);
-
-      // actual signing ->>
-      var dataInHex = '0x' + new Buffer(message).toString('hex');
-
-      blockchainProvider.provider.eth.personal.sign(dataInHex, address, "test password!")
-      .then(console.log);
-    });
+    } else {
+      this.getEthereumAddressAsync().then(address=>{
+        console.log(`${blockchainProvider.extension} -> Address: ${address}`);
   
+        // actual signing ->>
+        var dataInHex = '0x' + new Buffer(message).toString('hex');
+  
+        blockchainProvider.provider.eth.personal.sign(dataInHex, address, "test password!")
+        .then(console.log);
+      });
+    }  
   }
 
   getEthereumAddressAsync() {
-    const eth = this.blockchainProviders.web3Metamask.provider.eth;
+    const eth = this.blockchainProviders.metamask.provider.eth;
     return new Promise((resolve, reject)=>{
       // resolve(provider.debug());
       eth.getAccounts(function (error, accounts) {
@@ -116,17 +114,17 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.handleIxoInfoClick}>IXO INFO</button>
+        <button onClick={this.requestInfoFromIxoCM}>IXO INFO</button>
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
-        {this.blockchainProviders.web3Ixo.doShow && 
+        {this.blockchainProviders.ixo_credential_manager.doShow && 
           <Launchbutton
-            provider={this.blockchainProviders.web3Ixo.id}
+            provider={this.blockchainProviders.ixo_credential_manager.id}
             title="IXO-CM Sign" 
             handleLaunchEvent={this.handleExtensionLaunch}/>          
         }
-        {this.blockchainProviders.web3Metamask.doShow && 
+        {this.blockchainProviders.metamask.doShow && 
           <Launchbutton
-            provider={this.blockchainProviders.web3Metamask.id}
+            provider={this.blockchainProviders.metamask.id}
             title="Metamask Sign" 
             handleLaunchEvent={this.handleExtensionLaunch}/>
         }
