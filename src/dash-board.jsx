@@ -7,8 +7,6 @@ export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.registerContentscriptEventListener()
-
     this.state = {messageBody: ''}
 
     this.blockchainProviders = {
@@ -63,18 +61,6 @@ export default class Dashboard extends React.Component {
 
   handleIxoInfoClick (e) {
     this.requestInfoFromIxoCM()
-  }
-
-  registerContentscriptEventListener () {
-    window.addEventListener("message", function(event) {
-      if (event.source === window &&
-          event.data.origin &&
-          event.data.origin === "ixo-cm") {
-            const reply = event.data
-            console.log(`!!!webpage received reply: ${JSON.stringify(reply)}`)
-            alert(`Page script received reply:  ${JSON.stringify(reply)}`)
-      }
-    });
   }
 
   postMessageToContentscript (method, data = null) {
