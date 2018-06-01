@@ -1,6 +1,6 @@
 import React from 'react';
-import Web3 from 'web3';
 import Launchbutton from './launch-button';
+import Web3 from 'web3';
 
 export default class Dashboard extends React.Component {
   
