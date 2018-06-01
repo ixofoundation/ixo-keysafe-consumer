@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">IXO Credential Manager consumer</h1>
+          <h1 className="App-title">ixo Keysafe consumer</h1>
         </header>
         <Dashboard/>
       </div>

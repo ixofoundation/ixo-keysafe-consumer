@@ -11,7 +11,7 @@ export default class Dashboard extends React.Component {
 
     this.blockchainProviders = {
       metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
-      ixo_credential_manager: {id: 1, doShow: true, windowKey: "ixoCm", extension: "IXO Credential Manager", provider: null}
+      ixo_credential_manager: {id: 1, doShow: true, windowKey: "ixoCm", extension: "ixo Keysafe", provider: null}
     };
 
     // This binding is necessary to make `this` work in the callback
@@ -102,12 +102,12 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.handleRequestInfoButtonClicked}>IXO INFO</button>
+        <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
         {this.blockchainProviders.ixo_credential_manager.doShow && 
           <Launchbutton
             provider={this.blockchainProviders.ixo_credential_manager.id}
-            title="IXO-CM Sign" 
+            title="ixo Sign" 
             handleLaunchEvent={this.handleExtensionLaunch}/>          
         }
         {this.blockchainProviders.metamask.doShow && 
