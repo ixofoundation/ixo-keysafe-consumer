@@ -26,8 +26,27 @@ export default class Dashboard extends React.Component {
     if (this.blockchainProviders.ixo_credential_manager.doShow) {
       this.initWeb3Provider(this.blockchainProviders.ixo_credential_manager);
     }
+
+    this.registerWindowListener()
   }
 
+  registerWindowListener () {
+    /*
+    Listen for messages from the page.
+    If the message was from the page script, forward it to background.js.
+    */
+    window.addEventListener("message", (event) => {
+      if (event.data.origin === 'ixo-cm') {
+          const reply = event.data
+          this.handleIxoCMReply(reply)
+      }      
+    })
+  }
+
+  handleIxoCMReply = (reply) => {
+    alert(`Page handling received reply:  ${JSON.stringify(reply)}`)
+  }
+ 
   initWeb3Provider(blockchainProvider) {
     if (!window[blockchainProvider.windowKey]) {
       blockchainProvider.doShow = false;
@@ -57,10 +76,6 @@ export default class Dashboard extends React.Component {
     
     const blockchainProvider = (providerId === this.blockchainProviders.metamask.id)?this.blockchainProviders.metamask:this.blockchainProviders.ixo_credential_manager;
     this.signMessageWithProvider(this.state.messageBody, blockchainProvider);
-  }
-
-  handleIxoInfoClick (e) {
-    this.requestInfoFromIxoCM()
   }
 
   postMessageToContentscript (method, data = null) {
