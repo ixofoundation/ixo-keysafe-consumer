@@ -1,7 +1,6 @@
 import React from 'react';
 import Launchbutton from './launch-button';
 import Web3 from 'web3';
-import IxoCmTerminus from './lib/ixo-cm/ixo-cm-terminus'
 
 export default class Dashboard extends React.Component {
   
@@ -27,13 +26,10 @@ export default class Dashboard extends React.Component {
     if (this.blockchainProviders.ixo_credential_manager.doShow) {
       this.initWeb3Provider(this.blockchainProviders.ixo_credential_manager);
     }
-
-    //this.registerWindowListener()
-    this.ixoCmTerminus = new IxoCmTerminus()
   }
 
   handleRequestInfoButtonClicked (e) {
-    this.ixoCmTerminus.requestInfoFromIxoCM((error, response)=>{
+    this.blockchainProviders.ixo_credential_manager.provider.requestInfoFromIxoCM((error, response)=>{
       alert(`Dashboard handling received response for INFO response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
     })    
   }
@@ -48,7 +44,8 @@ export default class Dashboard extends React.Component {
           blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
         } else if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
           // blockchainProvider.provider = window[blockchainProvider.windowKey].currentProvider;
-          blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
+          const IxoInpageProvider = window[blockchainProvider.windowKey]
+          blockchainProvider.provider = new IxoInpageProvider();
         }
       }  
     }
@@ -72,7 +69,7 @@ export default class Dashboard extends React.Component {
   signMessageWithProvider(message, blockchainProvider) {
     if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
       
-      this.ixoCmTerminus.requestMessageSigningFromIxoCM(message, (error, response)=>{
+      this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(message, (error, response)=>{
         alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
       })
       return
