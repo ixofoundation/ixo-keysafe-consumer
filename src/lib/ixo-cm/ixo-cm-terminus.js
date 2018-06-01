@@ -1,3 +1,5 @@
+const uniqid = require('uniqid')
+
 class IxoCmTerminus {
 
   // PUBLIC METHODS
@@ -9,19 +11,22 @@ class IxoCmTerminus {
 
   constructor (opts) {
       console.log('CTOR of IxoCmTerminus')
-      this.callback = null
+      this.callbacks = {}
       this.registerWindowListener()
   }
 
-  requestMessageSigningFromIxoCM = (data) => {
+  requestMessageSigningFromIxoCM = (data, cb) => {
+    const ixoCmId = uniqid()
+    this.callbacks[ixoCmId] = cb
     const method = 'ixo-sign'
-    this.postMessageToContentscript(method, data)
+    this.postMessageToContentscript(method, ixoCmId, data)
   }
 
   requestInfoFromIxoCM = (cb) => {
-    this.callback = cb
+    const ixoCmId = uniqid()
+    this.callbacks[ixoCmId] = cb
     const method = 'ixo-info'
-    this.postMessageToContentscript(method)    
+    this.postMessageToContentscript(method, ixoCmId)    
   }
 
   // PRIVATE METHODS
@@ -44,20 +49,19 @@ class IxoCmTerminus {
     })
   }
 
-  postMessageToContentscript (method, data = null) {
+  postMessageToContentscript (method, ixoCmId, data = null) {
     window.postMessage({
       origin: 'ixo-dapp',
-      message: {method, data}
+      message: {method, ixoCmId, data}
     }, "*");
   }
 
   handleIxoCMReply = (reply) => {
     console.log(`IxoCmTerminus handling received reply:  ${JSON.stringify(reply)}`)
-    //alert(`IxoCmTerminus handling received reply:  ${JSON.stringify(reply)}`)
-    if (this.callback) {
-        if (reply.response) {
-            this.callback(reply.response)
-        }        
+    const callback = this.callbacks[reply.ixoCmId]
+    if (callback) {
+      delete this.callbacks[reply.ixoCmId]
+      callback(reply.error, reply.response)
     }
   }
 }

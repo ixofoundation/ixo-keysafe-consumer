@@ -33,8 +33,8 @@ export default class Dashboard extends React.Component {
   }
 
   handleRequestInfoButtonClicked (e) {
-    this.ixoCmTerminus.requestInfoFromIxoCM(response=>{
-      alert(`Dashboard handling received response:  ${JSON.stringify(response)}`)
+    this.ixoCmTerminus.requestInfoFromIxoCM((error, response)=>{
+      alert(`Dashboard handling received response for INFO response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
     })    
   }
  
@@ -72,7 +72,9 @@ export default class Dashboard extends React.Component {
   signMessageWithProvider(message, blockchainProvider) {
     if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
       
-      this.ixoCmTerminus.requestMessageSigningFromIxoCM(message)
+      this.ixoCmTerminus.requestMessageSigningFromIxoCM(message, (error, response)=>{
+        alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
+      })
       return
     } else {
       this.getEthereumAddressAsync().then(address=>{
