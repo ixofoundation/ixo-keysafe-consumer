@@ -1,6 +1,7 @@
 import React from 'react';
 import Launchbutton from './launch-button';
 import Web3 from 'web3';
+import IxoCmTerminus from './lib/ixo-cm/ixo-cm-terminus'
 
 export default class Dashboard extends React.Component {
   
@@ -18,7 +19,7 @@ export default class Dashboard extends React.Component {
     this.handleExtensionLaunch = this.handleExtensionLaunch.bind(this);
     this.handleMessageBodyChanged = this.handleMessageBodyChanged.bind(this);
     this.getEthereumAddressAsync = this.getEthereumAddressAsync.bind(this);
-    this.requestInfoFromIxoCM = this.requestInfoFromIxoCM.bind(this)
+    this.handleRequestInfoButtonClicked = this.handleRequestInfoButtonClicked.bind(this)
 
     if (this.blockchainProviders.metamask.doShow) {
       this.initWeb3Provider(this.blockchainProviders.metamask);
@@ -27,24 +28,12 @@ export default class Dashboard extends React.Component {
       this.initWeb3Provider(this.blockchainProviders.ixo_credential_manager);
     }
 
-    this.registerWindowListener()
+    //this.registerWindowListener()
+    this.ixoCmTerminus = new IxoCmTerminus()
   }
 
-  registerWindowListener () {
-    /*
-    Listen for messages from the page.
-    If the message was from the page script, forward it to background.js.
-    */
-    window.addEventListener("message", (event) => {
-      if (event.data.origin === 'ixo-cm') {
-          const reply = event.data
-          this.handleIxoCMReply(reply)
-      }      
-    })
-  }
-
-  handleIxoCMReply = (reply) => {
-    alert(`Page handling received reply:  ${JSON.stringify(reply)}`)
+  handleRequestInfoButtonClicked (e) {
+    this.ixoCmTerminus.requestInfoFromIxoCM()    
   }
  
   initWeb3Provider(blockchainProvider) {
@@ -78,27 +67,10 @@ export default class Dashboard extends React.Component {
     this.signMessageWithProvider(this.state.messageBody, blockchainProvider);
   }
 
-  postMessageToContentscript (method, data = null) {
-    window.postMessage({
-      origin: 'ixo-dapp',
-      message: {method, data}
-    }, "*");
-  }
-
-  requestMessageSigningFromIxoCM (data) {
-    const method = 'ixo-sign'
-    this.postMessageToContentscript(method, data)
-  }
-
-  requestInfoFromIxoCM (e) {
-    const method = 'ixo-info'
-    this.postMessageToContentscript(method)    
-  }
-
   signMessageWithProvider(message, blockchainProvider) {
     if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
       
-      this.requestMessageSigningFromIxoCM(message)
+      this.ixoCmTerminus.requestMessageSigningFromIxoCM(message)
       return
     } else {
       this.getEthereumAddressAsync().then(address=>{
@@ -129,7 +101,7 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.requestInfoFromIxoCM}>IXO INFO</button>
+        <button onClick={this.handleRequestInfoButtonClicked}>IXO INFO</button>
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
         {this.blockchainProviders.ixo_credential_manager.doShow && 
           <Launchbutton

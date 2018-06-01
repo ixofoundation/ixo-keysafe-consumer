@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import Dashboard from './dash-board';
+const log = require('loglevel')
+
+log.setDefaultLevel(true ? 'debug' : 'warn')
 
 class App extends Component {
 
