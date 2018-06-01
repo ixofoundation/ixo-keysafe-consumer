@@ -102,7 +102,9 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
+        {this.blockchainProviders.ixo_credential_manager.doShow && 
+          <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
+        }
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
         {this.blockchainProviders.ixo_credential_manager.doShow && 
           <Launchbutton
