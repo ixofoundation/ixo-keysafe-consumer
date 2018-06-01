@@ -33,7 +33,9 @@ export default class Dashboard extends React.Component {
   }
 
   handleRequestInfoButtonClicked (e) {
-    this.ixoCmTerminus.requestInfoFromIxoCM()    
+    this.ixoCmTerminus.requestInfoFromIxoCM(response=>{
+      alert(`Dashboard handling received response:  ${JSON.stringify(response)}`)
+    })    
   }
  
   initWeb3Provider(blockchainProvider) {
@@ -116,6 +118,6 @@ export default class Dashboard extends React.Component {
             handleLaunchEvent={this.handleExtensionLaunch}/>
         }
       </div>      
-  );
+  )
   }
 }

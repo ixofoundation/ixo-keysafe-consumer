@@ -9,6 +9,7 @@ class IxoCmTerminus {
 
   constructor (opts) {
       console.log('CTOR of IxoCmTerminus')
+      this.callback = null
       this.registerWindowListener()
   }
 
@@ -17,7 +18,8 @@ class IxoCmTerminus {
     this.postMessageToContentscript(method, data)
   }
 
-  requestInfoFromIxoCM = () => {
+  requestInfoFromIxoCM = (cb) => {
+    this.callback = cb
     const method = 'ixo-info'
     this.postMessageToContentscript(method)    
   }
@@ -50,7 +52,13 @@ class IxoCmTerminus {
   }
 
   handleIxoCMReply = (reply) => {
-    alert(`IxoCmTerminus handling received reply:  ${JSON.stringify(reply)}`)
+    console.log(`IxoCmTerminus handling received reply:  ${JSON.stringify(reply)}`)
+    //alert(`IxoCmTerminus handling received reply:  ${JSON.stringify(reply)}`)
+    if (this.callback) {
+        if (reply.response) {
+            this.callback(reply.response)
+        }        
+    }
   }
 }
 
