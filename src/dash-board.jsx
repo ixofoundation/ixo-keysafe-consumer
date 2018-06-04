@@ -33,6 +33,30 @@ export default class Dashboard extends React.Component {
       alert(`Dashboard handling received response for INFO response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
     })    
   }
+
+  handleSimulateDidDocLedgeringButtonClicked = (e) => {
+    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, didDoc)=>{
+      if (error) {
+        alert(`Simulate signing DID Doc retrieval error: ${JSON.stringify(error)}`)
+      } else {
+        console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(didDoc)}\n`)
+        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(didDoc), (error, signature)=>{
+          console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signature)}\n, error: ${JSON.stringify(error)}`)
+          // alert(`Simulate signing DID Doc  SIGN response: ${JSON.stringify(signature)}, error: ${JSON.stringify(error)}`)
+
+          const {signatureValue, created} = signature
+          const ledgerObject = this.generateLedgerObject(didDoc, signatureValue, created)
+          console.log(`****\n${JSON.stringify(ledgerObject)}\n`)
+          alert(`Simulate signing DID Doc SIGN ledger object: \n${JSON.stringify(ledgerObject)}\n`)
+        })
+      }      
+    })    
+  }
+
+  generateLedgerObject = (didDoc, signature, created) => {
+    const signatureValue = [1, signature]
+    return {payload: [10, didDoc], signature: {signatureValue, created}}
+  }
  
   initWeb3Provider(blockchainProvider) {
     if (!window[blockchainProvider.windowKey]) {
@@ -102,6 +126,9 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
+        {this.blockchainProviders.ixo_credential_manager.doShow && 
+          <button onClick={this.handleSimulateDidDocLedgeringButtonClicked}>Simulate DID ledgering</button>
+        }
         {this.blockchainProviders.ixo_credential_manager.doShow && 
           <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
         }
