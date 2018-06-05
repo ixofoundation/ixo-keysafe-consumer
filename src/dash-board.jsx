@@ -49,8 +49,6 @@ export default class Dashboard extends React.Component {
 
           const ledgerObjectHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
           console.log(`****\n${ledgerObjectHex}\n`)
-          
-          console.log(`****\n${ledgerObjectJson}\n`)
           alert(`Simulate signing DID Doc SIGN ledger object: \n${ledgerObjectJson}\n`)
         })
       }      
