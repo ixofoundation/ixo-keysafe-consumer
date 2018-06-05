@@ -35,18 +35,16 @@ export default class Dashboard extends React.Component {
   }
 
   handleSimulateDidDocLedgeringButtonClicked = (e) => {
-    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, response)=>{
+    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, didDocResponse)=>{
       if (error) {
         alert(`Simulate signing DID Doc retrieval error: ${JSON.stringify(error)}`)
       } else {
-        console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(response)}\n`)
-        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(response), (error, signature)=>{
-          console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signature)}\n, error: ${JSON.stringify(error)}`)
-          // alert(`Simulate signing DID Doc  SIGN response: ${JSON.stringify(signature)}, error: ${JSON.stringify(error)}`)
-          debugger
+        console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(didDocResponse)}\n`)
+        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(didDocResponse), (error, signatureResponse)=>{
+          console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signatureResponse)}\n, error: ${JSON.stringify(error)}`)
 
-          const {signatureValue, created} = signature
-          const ledgerObject = this.generateLedgerObject(response, signatureValue, created)
+          const {signatureValue, created} = signatureResponse
+          const ledgerObject = this.generateLedgerObject(didDocResponse, signatureValue, created)
           const ledgerObjectJson = JSON.stringify(ledgerObject)
 
           const ledgerObjectHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
