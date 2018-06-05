@@ -37,27 +37,51 @@ export default class Dashboard extends React.Component {
   handleSimulateDidDocLedgeringButtonClicked = (e) => {
     this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, didDocResponse)=>{
       if (error) {
-        alert(`Simulate signing DID Doc retrieval error: ${JSON.stringify(error)}`)
+        alert(`Simulate DID Doc retrieval error: ${JSON.stringify(error)}`)
       } else {
         console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(didDocResponse)}\n`)
         this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(didDocResponse), (error, signatureResponse)=>{
-          console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signatureResponse)}\n, error: ${JSON.stringify(error)}`)
+          if (error) {
+            alert(`Simulate DID Doc signing error: ${JSON.stringify(error)}`)
+          } else {
+            console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signatureResponse)}\n, error: ${JSON.stringify(error)}`)
 
-          const {signatureValue, created} = signatureResponse
-          const ledgerObject = this.generateLedgerObject(didDocResponse, signatureValue, created)
-          const ledgerObjectJson = JSON.stringify(ledgerObject)
+            const {signatureValue, created} = signatureResponse
+            const ledgerObjectJson = this.generateLedgerObjectJson(didDocResponse, signatureValue, created)
+            const ledgerObjectUppercaseHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
+            const ledgeringEndpoint = `http://35.225.6.178:46657/broadcast_tx_sync?tx=0x${ledgerObjectUppercaseHex}`
 
-          const ledgerObjectHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
-          console.log(`****\n${ledgerObjectHex}\n`)
-          alert(`Simulate signing DID Doc SIGN ledger object: \n${ledgerObjectJson}\n`)
+            this.performLedgeringHttpRequest(ledgeringEndpoint, (response)=>{
+              console.log(`success callback from perform ledgering HTTP call response: \n${response}`)
+              alert(`success callback from perform ledgering HTTP call response: ${response}`)
+            }, (status, text)=>{
+              console.log(`failure callback from perform ledgering HTTP call status: \n${status}\ntext: \n${text}`)
+              alert(`failure callback from perform ledgering HTTP call status: \n${status}, text: \n${text}`)
+            })
+          }
         })
       }      
     })    
   }
 
-  generateLedgerObject = (didDoc, signature, created) => {
+
+  performLedgeringHttpRequest = (url, success, failure) => {
+    var request = new XMLHttpRequest()
+    request.open("GET", url, true);
+    request.onreadystatechange = function() {
+      if (request.readyState === 4) {
+        if (request.status === 200)
+          success(request.responseText);
+        else if (failure)
+          failure(request.status, request.statusText);
+      }
+    };
+    request.send(null);
+  }
+
+  generateLedgerObjectJson = (didDoc, signature, created) => {
     const signatureValue = [1, signature]
-    return {payload: [10, didDoc], signature: {signatureValue, created}}
+    return JSON.stringify({payload: [10, didDoc], signature: {signatureValue, created}})
   }
  
   initWeb3Provider(blockchainProvider) {
@@ -129,7 +153,7 @@ export default class Dashboard extends React.Component {
     return (
       <div>
         {this.blockchainProviders.ixo_credential_manager.doShow && 
-          <button onClick={this.handleSimulateDidDocLedgeringButtonClicked}>Simulate DID ledgering</button>
+          <button onClick={this.handleSimulateDidDocLedgeringButtonClicked}>Ledger DID Manually</button>
         }
         {this.blockchainProviders.ixo_credential_manager.doShow && 
           <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
