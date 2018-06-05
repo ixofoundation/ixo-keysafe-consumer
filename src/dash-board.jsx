@@ -35,19 +35,25 @@ export default class Dashboard extends React.Component {
   }
 
   handleSimulateDidDocLedgeringButtonClicked = (e) => {
-    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, didDoc)=>{
+    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, response)=>{
       if (error) {
         alert(`Simulate signing DID Doc retrieval error: ${JSON.stringify(error)}`)
       } else {
-        console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(didDoc)}\n`)
-        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(didDoc), (error, signature)=>{
+        console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(response)}\n`)
+        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(response), (error, signature)=>{
           console.log(`Simulate signing DID Doc  SIGN response: \n${JSON.stringify(signature)}\n, error: ${JSON.stringify(error)}`)
           // alert(`Simulate signing DID Doc  SIGN response: ${JSON.stringify(signature)}, error: ${JSON.stringify(error)}`)
+          debugger
 
           const {signatureValue, created} = signature
-          const ledgerObject = this.generateLedgerObject(didDoc, signatureValue, created)
-          console.log(`****\n${JSON.stringify(ledgerObject)}\n`)
-          alert(`Simulate signing DID Doc SIGN ledger object: \n${JSON.stringify(ledgerObject)}\n`)
+          const ledgerObject = this.generateLedgerObject(response, signatureValue, created)
+          const ledgerObjectJson = JSON.stringify(ledgerObject)
+
+          const ledgerObjectHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
+          console.log(`****\n${ledgerObjectHex}\n`)
+          
+          console.log(`****\n${ledgerObjectJson}\n`)
+          alert(`Simulate signing DID Doc SIGN ledger object: \n${ledgerObjectJson}\n`)
         })
       }      
     })    
