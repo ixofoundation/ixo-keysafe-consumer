@@ -9,8 +9,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   - [npm test](#npm-test)
   - [npm run build](#npm-run-build)
   - [npm run eject](#npm-run-eject)
-- [Supported Features](#supported-features)
-  - [informs the user of the absence of expected browser extensions, IXO Keysafe and Metamask](#absent-extensions)
+- [Features](#features)
+  - [detect absence of Ixo Keystore browser extension](#absent-extension)
 
   ## Available Scripts
 
@@ -49,9 +49,9 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-  ## Supported Features
+  ## Features
 
-### `absent Ixo Keysafe extension`
+### `absent extension`
 
 In the case of the page loading and not finding the constructor for the IxoKeysafeInpageProvider on the global window object an alert will show indicating this.  All functionality relating to interaction with the Ixo Keysafe will also not be available
 
