@@ -43,8 +43,14 @@ this.ixoKsProvider.getInfo((error, response)=>{
   console.log(`Callback received response for getInfo. response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`);
 })
 ```
-A successful response looks like this:
-```"{"didDoc":{"did":"did:sov:BhHF1yt33YVivywggsKZ4k","pubKey":"6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"},"name":"Your Account Name"}"```
+__a successful response looks like this:__
+```{
+	"didDoc": {
+		"did": "did:sov:BhHF1yt33YVivywggsKZ4k",
+		"pubKey": "6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"
+	},
+	"name": "Your Account Name"
+}```
 
 ### `keysafe get DID doc`
 
@@ -57,8 +63,13 @@ this.ixoKsProvider.getDidDoc((error, response)=>{
   }
 }
 ```
-A successful response looks like this:
-```"{"didDoc":{"did":"did:sov:BhHF1yt33YVivywggsKZ4k","pubKey":"6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"}}"```
+__a successful response looks like this:__
+```{
+	"didDoc": {
+		"did": "did:sov:BhHF1yt33YVivywggsKZ4k",
+		"pubKey": "6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"
+	}
+}```
 
 ### `keysafe request signing`
 
@@ -72,7 +83,14 @@ this.ixoKsProvider.requestSigning(textToSign, (error, response)=>{
   }
 })
 ```
-```"{"type":"ed25519-sha-256","created":"2018-06-07T14:51:37Z","creator":"did:sov:BhHF1yt33YVivywggsKZ4k","publicKey":"52PTt1eA5gGSiXBuoNwtGrN3p52XKTHb4ayer48MCahR","signatureValue":"B59D2CA3B084C1DE38E08627815AE62EE7DC03E466688267BCACA04B61040DDF8DCDB9CFC713D4B9694B5499281F9ACFE734C663A91E17CA48335F9CC8B58704"}"```
+__a successful response looks like this:__
+```{
+	"type": "ed25519-sha-256",
+	"created": "2018-06-07T14:51:37Z",
+	"creator": "did:sov:BhHF1yt33YVivywggsKZ4k",
+	"publicKey": "52PTt1eA5gGSiXBuoNwtGrN3p52XKTHb4ayer48MCahR",
+	"signatureValue": "B59D2CA3B084C1DE38E08627815AE62EE7DC03E466688267BCACA04B61040DDF8DCDB9CFC713D4B9694B5499281F9ACFE734C663A91E17CA48335F9CC8B58704"
+}```
 
   ## Available Scripts
 
