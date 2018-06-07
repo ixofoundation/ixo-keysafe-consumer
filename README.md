@@ -51,8 +51,12 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
   ## Supported Features
 
-In the project directory, you can run:
+### `absent Ixo Keysafe extension`
 
-### `absent extensions`
+In the case of the page loading and not finding the constructor for the IxoKeysafeInpageProvider on the global window object an alert will show indicating this.  All functionality relating to interaction with the Ixo Keysafe will also not be available
 
-Runs the app in the development mode.<br>
+```javascript
+if (!window["ixoKs"]) {
+      window.alert("Please install IXO Keysafe first.");
+}
+```

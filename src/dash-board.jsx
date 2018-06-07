@@ -11,7 +11,7 @@ export default class Dashboard extends React.Component {
 
     this.blockchainProviders = {
       metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
-      ixo_keysafe: {id: 1, doShow: true, windowKey: "ixoKs", extension: "ixo Keysafe", provider: null}
+      ixo_keysafe: {id: 1, doShow: true, windowKey: "ixoKs", extension: "IXO Keysafe", provider: null}
     };
 
     // This binding is necessary to make `this` work in the callback
