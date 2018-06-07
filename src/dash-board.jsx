@@ -11,7 +11,7 @@ export default class Dashboard extends React.Component {
 
     this.blockchainProviders = {
       metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
-      ixo_credential_manager: {id: 1, doShow: true, windowKey: "ixoCm", extension: "ixo Keysafe", provider: null}
+      ixo_keysafe: {id: 1, doShow: true, windowKey: "ixoKs", extension: "ixo Keysafe", provider: null}
     };
 
     // This binding is necessary to make `this` work in the callback
@@ -21,26 +21,26 @@ export default class Dashboard extends React.Component {
     this.handleRequestInfoButtonClicked = this.handleRequestInfoButtonClicked.bind(this)
 
     if (this.blockchainProviders.metamask.doShow) {
-      this.initWeb3Provider(this.blockchainProviders.metamask);
+      this.initProvider(this.blockchainProviders.metamask);
     }
-    if (this.blockchainProviders.ixo_credential_manager.doShow) {
-      this.initWeb3Provider(this.blockchainProviders.ixo_credential_manager);
+    if (this.blockchainProviders.ixo_keysafe.doShow) {
+      this.initProvider(this.blockchainProviders.ixo_keysafe);
     }
   }
 
   handleRequestInfoButtonClicked (e) {
-    this.blockchainProviders.ixo_credential_manager.provider.requestInfoFromIxoCM((error, response)=>{
+    this.blockchainProviders.ixo_keysafe.provider.getInfo((error, response)=>{
       alert(`Dashboard handling received response for INFO response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
     })    
   }
 
   handleSimulateDidDocLedgeringButtonClicked = (e) => {
-    this.blockchainProviders.ixo_credential_manager.provider.requestDidDocFromIxoCM((error, didDocResponse)=>{
+    this.blockchainProviders.ixo_keysafe.provider.getDidDoc((error, didDocResponse)=>{
       if (error) {
         alert(`Simulate DID Doc retrieval error: ${JSON.stringify(error)}`)
       } else {
         console.log(`Simulate signing DID Doc retrieval response: \n${JSON.stringify(didDocResponse)}\n`)
-        this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(JSON.stringify(didDocResponse), (error, signatureResponse)=>{
+        this.blockchainProviders.ixo_keysafe.provider.requestSigning(JSON.stringify(didDocResponse), (error, signatureResponse)=>{
           if (error) {
             alert(`Simulate DID Doc signing error: ${JSON.stringify(error)}`)
           } else {
@@ -84,7 +84,7 @@ export default class Dashboard extends React.Component {
     return JSON.stringify({payload: [10, didDoc], signature: {signatureValue, created}})
   }
  
-  initWeb3Provider(blockchainProvider) {
+  initProvider(blockchainProvider) {
     if (!window[blockchainProvider.windowKey]) {
       blockchainProvider.doShow = false;
       window.alert(`Please install ${blockchainProvider.extension} first.`);
@@ -92,10 +92,10 @@ export default class Dashboard extends React.Component {
       if (!blockchainProvider.provider) {
         if (blockchainProvider.id === this.blockchainProviders.metamask.id) {
           blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
-        } else if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
+        } else if (blockchainProvider.id === this.blockchainProviders.ixo_keysafe.id) {
           // blockchainProvider.provider = window[blockchainProvider.windowKey].currentProvider;
-          const IxoInpageProvider = window[blockchainProvider.windowKey]
-          blockchainProvider.provider = new IxoInpageProvider();
+          const IxoKeysafeInpageProvider = window[blockchainProvider.windowKey]
+          blockchainProvider.provider = new IxoKeysafeInpageProvider();
         }
       }  
     }
@@ -112,14 +112,14 @@ export default class Dashboard extends React.Component {
       return;
     }
     
-    const blockchainProvider = (providerId === this.blockchainProviders.metamask.id)?this.blockchainProviders.metamask:this.blockchainProviders.ixo_credential_manager;
+    const blockchainProvider = (providerId === this.blockchainProviders.metamask.id)?this.blockchainProviders.metamask:this.blockchainProviders.ixo_keysafe;
     this.signMessageWithProvider(this.state.messageBody, blockchainProvider);
   }
 
   signMessageWithProvider(message, blockchainProvider) {
-    if (blockchainProvider.id === this.blockchainProviders.ixo_credential_manager.id) {
+    if (blockchainProvider.id === this.blockchainProviders.ixo_keysafe.id) {
       
-      this.blockchainProviders.ixo_credential_manager.provider.requestMessageSigningFromIxoCM(message, (error, response)=>{
+      this.blockchainProviders.ixo_keysafe.provider.requestSigning(message, (error, response)=>{
         alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
       })
       return
@@ -152,16 +152,16 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        {this.blockchainProviders.ixo_credential_manager.doShow && 
+        {this.blockchainProviders.ixo_keysafe.doShow && 
           <button onClick={this.handleSimulateDidDocLedgeringButtonClicked}>Ledger DID Manually</button>
         }
-        {this.blockchainProviders.ixo_credential_manager.doShow && 
+        {this.blockchainProviders.ixo_keysafe.doShow && 
           <button onClick={this.handleRequestInfoButtonClicked}>ixo INFO</button>
         }
         <input value={this.state.messageBody} onChange={this.handleMessageBodyChanged} />
-        {this.blockchainProviders.ixo_credential_manager.doShow && 
+        {this.blockchainProviders.ixo_keysafe.doShow && 
           <Launchbutton
-            provider={this.blockchainProviders.ixo_credential_manager.id}
+            provider={this.blockchainProviders.ixo_keysafe.id}
             title="ixo Sign" 
             handleLaunchEvent={this.handleExtensionLaunch}/>          
         }
