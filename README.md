@@ -11,6 +11,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   - [npm run eject](#npm-run-eject)
 - [Features](#features)
   - [detect absence of Ixo Keystore browser extension](#absent-extension)
+  - [instantiate Ixo Keystore browser extension](#instantiate-extension)
+  - [request keysafe information](#keysafe-information)
+  - [request keysafe DID document](#keysafe-did-doc)
+  - [request keysafe to present message signing](#keysafe-request-signing)
+
 
   ## Available Scripts
 
@@ -60,3 +65,31 @@ if (!window["ixoKs"]) {
       window.alert("Please install IXO Keysafe first.");
 }
 ```
+
+### `instantiate extension`
+
+```
+const IxoKeysafeInpageProvider = window[blockchainProvider.windowKey];
+this.ixoKsProvider = new IxoKeysafeInpageProvider();
+```
+
+### `keysafe information`
+
+```
+this.ixoKsProvider.getInfo((error, response)=>{
+  alert(`Callback received response for getInfo. response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`);
+})
+```
+
+### `keysafe DID doc`
+
+```
+this.ixoKsProvider.getDidDoc((error, didDocResponse)=>{
+  if (error) {
+    alert(`Simulate DID Doc retrieval error: ${JSON.stringify(error)}`);
+  } else {
+    console.log(`Simulate DID Doc retrieval response: \n${JSON.stringify(didDocResponse)}\n`);
+  }
+}
+```
+
