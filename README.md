@@ -44,7 +44,7 @@ this.ixoKsProvider.getInfo((error, response)=>{
 })
 ```
 A successful response looks like this:
-```"{"didDoc":{"did":"did:sov:BhHF1yt33YVivywggsKZ4k","pubKey":"6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"}}"```
+```"{"didDoc":{"did":"did:sov:BhHF1yt33YVivywggsKZ4k","pubKey":"6q5GvVbsarDupenM8hmJugjy3yqyRPAAT2ixoQ6XCBuL"},"name":"Your Account Name"}"```
 
 ### `keysafe get DID doc`
 
