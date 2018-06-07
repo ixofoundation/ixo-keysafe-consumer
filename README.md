@@ -4,18 +4,70 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Table of Contents
 
+- [Features](#features)
+  - [detect absence of Ixo Keystore browser extension](#absent-extension)
+  - [instantiate Ixo Keystore browser extension](#instantiate-extension)
+  - [request keysafe information](#keysafe-information)
+  - [request keysafe DID document](#keysafe-get-did-doc)
+  - [request keysafe to present message signing](#keysafe-request-signing)
+
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
   - [npm test](#npm-test)
   - [npm run build](#npm-run-build)
   - [npm run eject](#npm-run-eject)
-- [Features](#features)
-  - [detect absence of Ixo Keystore browser extension](#absent-extension)
-  - [instantiate Ixo Keystore browser extension](#instantiate-extension)
-  - [request keysafe information](#keysafe-information)
-  - [request keysafe DID document](#keysafe-did-doc)
-  - [request keysafe to present message signing](#keysafe-request-signing)
 
+  ## Features
+
+### `absent extension`
+
+In the case of the page loading and not finding the constructor for the IxoKeysafeInpageProvider on the global window object an alert will show indicating this.  All functionality relating to interaction with the Ixo Keysafe will also not be available
+
+```javascript
+if (!window["ixoKs"]) {
+      window.alert("Please install IXO Keysafe first.");
+}
+```
+
+### `instantiate extension`
+
+```
+const IxoKeysafeInpageProvider = window["ixoKs"];
+this.ixoKsProvider = new IxoKeysafeInpageProvider();
+```
+
+### `keysafe information`
+
+```
+this.ixoKsProvider.getInfo((error, response)=>{
+  console.log(`Callback received response for getInfo. response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`);
+})
+```
+
+### `keysafe get DID doc`
+
+```
+this.ixoKsProvider.getDidDoc((error, response)=>{
+  if (error) {
+    // handle error
+  } else {
+    // continue with successful response
+  }
+}
+```
+
+### `keysafe request signing`
+
+```
+const textToSign = '{"key1": "value1", "key2": "this entire textToSign can be any string really"}';
+this.ixoKsProvider.requestSigning(textToSign, (error, response)=>{
+  if (error) {
+    // handle error
+  } else {
+    // continue with successful response
+  }
+})
+```
 
   ## Available Scripts
 
@@ -53,43 +105,4 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-  ## Features
-
-### `absent extension`
-
-In the case of the page loading and not finding the constructor for the IxoKeysafeInpageProvider on the global window object an alert will show indicating this.  All functionality relating to interaction with the Ixo Keysafe will also not be available
-
-```javascript
-if (!window["ixoKs"]) {
-      window.alert("Please install IXO Keysafe first.");
-}
-```
-
-### `instantiate extension`
-
-```
-const IxoKeysafeInpageProvider = window[blockchainProvider.windowKey];
-this.ixoKsProvider = new IxoKeysafeInpageProvider();
-```
-
-### `keysafe information`
-
-```
-this.ixoKsProvider.getInfo((error, response)=>{
-  alert(`Callback received response for getInfo. response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`);
-})
-```
-
-### `keysafe DID doc`
-
-```
-this.ixoKsProvider.getDidDoc((error, didDocResponse)=>{
-  if (error) {
-    alert(`Simulate DID Doc retrieval error: ${JSON.stringify(error)}`);
-  } else {
-    console.log(`Simulate DID Doc retrieval response: \n${JSON.stringify(didDocResponse)}\n`);
-  }
-}
-```
 
