@@ -121,6 +121,7 @@ export default class Dashboard extends React.Component {
       
       this.blockchainProviders.ixo_keysafe.provider.requestSigning(message, (error, response)=>{
         alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
+        console.log(`Dashboard handling received response for SIGN response: \n${JSON.stringify(response)}\n, error: \n${JSON.stringify(error)}\n`)
       })
       return
     } else {
