@@ -49,7 +49,7 @@ export default class Dashboard extends React.Component {
             const {signatureValue, created} = signatureResponse
             const ledgerObjectJson = this.generateLedgerObjectJson(didDocResponse, signatureValue, created)
             const ledgerObjectUppercaseHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
-            const ledgeringEndpoint = `http://104.155.142.57:46657/broadcast_tx_sync?tx=0x${ledgerObjectUppercaseHex}`
+            const ledgeringEndpoint = `http://35.192.187.110/broadcast_tx_sync?tx=0x${ledgerObjectUppercaseHex}`
 
             this.performLedgeringHttpRequest(ledgeringEndpoint, (response)=>{
               console.log(`success callback from perform ledgering HTTP call response: \n${response}`)
