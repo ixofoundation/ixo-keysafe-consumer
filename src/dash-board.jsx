@@ -10,7 +10,7 @@ export default class Dashboard extends React.Component {
     this.state = {messageBody: ''}
 
     this.blockchainProviders = {
-      metamask: {id: 0, doShow: true, windowKey: "web3", extension: "Metamask", provider: null},
+      metamask: {id: 0, doShow: false, windowKey: "web3", extension: "Metamask", provider: null},
       ixo_keysafe: {id: 1, doShow: true, windowKey: "ixoKs", extension: "IXO Keysafe", provider: null}
     };
 
