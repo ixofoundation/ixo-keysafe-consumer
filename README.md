@@ -19,7 +19,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   - [npm run build](#npm-run-build)
   - [npm run eject](#npm-run-eject)
 
-  ## Quickstart
+## Quickstart
 
 1. Clone this repository
 2. run `npm install`
