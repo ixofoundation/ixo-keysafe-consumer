@@ -4,6 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Table of Contents
 
+- [Quickstart](#quickstart)
+
 - [Features](#features)
   - [detect absence of Ixo Keystore browser extension](#absent-extension)
   - [instantiate Ixo Keystore browser extension](#instantiate-extension)
@@ -16,6 +18,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   - [npm test](#npm-test)
   - [npm run build](#npm-run-build)
   - [npm run eject](#npm-run-eject)
+
+## Quickstart
+
+1. Clone this repository
+2. run `npm install`
+3. start the application on localhost port 3000 by running `npm run start`
+
 
   ## Features
 
