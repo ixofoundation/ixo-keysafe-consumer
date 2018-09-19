@@ -85,9 +85,9 @@ export default class Dashboard extends React.Component {
 
   generateLedgerObjectJson = (didDoc, signature, created) => {
     const signatureValue = [1, signature]
-    const didDocJson = JSON.stringify(didDoc);
-    const didDocHex = new Buffer(didDocJson).toString("hex").toUpperCase()
-    return JSON.stringify({payload: [10, didDocHex], signature: {signatureValue, created}})
+    // const didDocJson = JSON.stringify(didDoc);
+    // const didDocHex = new Buffer(didDocJson).toString("hex").toUpperCase()
+    return JSON.stringify({payload: [10, didDoc], signature: {signatureValue, created}})
   }
  
   initProvider(blockchainProvider) {
