@@ -1,0 +1,7 @@
+version: "2"
+services:
+  block-sync:
+    container_name: keysafe
+    image: trustlab/ixo-keysafe-tool:latest
+    ports:
+      - "3000:3000"

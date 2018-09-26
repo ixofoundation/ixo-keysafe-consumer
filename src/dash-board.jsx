@@ -1,6 +1,7 @@
 import React from 'react';
 import Launchbutton from './launch-button';
 import Web3 from 'web3';
+import { debug } from 'util';
 
 export default class Dashboard extends React.Component {
   
@@ -118,8 +119,8 @@ export default class Dashboard extends React.Component {
 
   signMessageWithProvider(message, blockchainProvider) {
     if (blockchainProvider.id === this.blockchainProviders.ixo_keysafe.id) {
-      
-      this.blockchainProviders.ixo_keysafe.provider.requestSigning(message, (error, response)=>{
+      var jsonmsg = JSON.stringify(JSON.parse(message));
+      this.blockchainProviders.ixo_keysafe.provider.requestSigning(jsonmsg, (error, response)=>{
         alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
         console.log(`Dashboard handling received response for SIGN response: \n${JSON.stringify(response)}\n, error: \n${JSON.stringify(error)}\n`)
       })
