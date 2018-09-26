@@ -70,7 +70,6 @@ export default class Dashboard extends React.Component {
 
 
   performLedgeringHttpRequest = (url, success, failure) => {
-    debugger;
     var request = new XMLHttpRequest()
     request.open("GET", url, true);
     request.onreadystatechange = function() {
