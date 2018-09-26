@@ -3,6 +3,8 @@ import Launchbutton from './launch-button';
 import Web3 from 'web3';
 import { debug } from 'util';
 
+const BLOCK_SYNC_URL = 'http://127.0.0.1:8080';
+
 export default class Dashboard extends React.Component {
   
   constructor(props) {
@@ -50,7 +52,8 @@ export default class Dashboard extends React.Component {
             const {signatureValue, created} = signatureResponse
             const ledgerObjectJson = this.generateLedgerObjectJson(didDocResponse, signatureValue, created)
             const ledgerObjectUppercaseHex = new Buffer(ledgerObjectJson).toString("hex").toUpperCase()
-            const ledgeringEndpoint = `http://35.192.187.110:46657/broadcast_tx_sync?tx=0x${ledgerObjectUppercaseHex}`
+
+            const ledgeringEndpoint = `${BLOCK_SYNC_URL}/api/blockchain/0x${ledgerObjectUppercaseHex}`
 
             this.performLedgeringHttpRequest(ledgeringEndpoint, (response)=>{
               console.log(`success callback from perform ledgering HTTP call response: \n${response}`)
@@ -67,6 +70,7 @@ export default class Dashboard extends React.Component {
 
 
   performLedgeringHttpRequest = (url, success, failure) => {
+    debugger;
     var request = new XMLHttpRequest()
     request.open("GET", url, true);
     request.onreadystatechange = function() {
@@ -82,6 +86,8 @@ export default class Dashboard extends React.Component {
 
   generateLedgerObjectJson = (didDoc, signature, created) => {
     const signatureValue = [1, signature]
+    // const didDocJson = JSON.stringify(didDoc);
+    // const didDocHex = new Buffer(didDocJson).toString("hex").toUpperCase()
     return JSON.stringify({payload: [10, didDoc], signature: {signatureValue, created}})
   }
  
