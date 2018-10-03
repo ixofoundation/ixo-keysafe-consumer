@@ -84,10 +84,8 @@ export default class Dashboard extends React.Component {
   }
 
   generateLedgerObjectJson = (didDoc, signature, created) => {
-    const signatureValue = [1, signature]
-    // const didDocJson = JSON.stringify(didDoc);
-    // const didDocHex = new Buffer(didDocJson).toString("hex").toUpperCase()
-    return JSON.stringify({payload: [10, didDoc], signature: {signatureValue, created}})
+    const signatureValue = signature
+    return JSON.stringify({payload: [{type:"did/AddDid", value: didDoc}], signatures: [{signatureValue: signatureValue, created:created}]})
   }
  
   initProvider(blockchainProvider) {
@@ -99,7 +97,6 @@ export default class Dashboard extends React.Component {
         if (blockchainProvider.id === this.blockchainProviders.metamask.id) {
           blockchainProvider.provider = new Web3(window[blockchainProvider.windowKey].currentProvider);
         } else if (blockchainProvider.id === this.blockchainProviders.ixo_keysafe.id) {
-          // blockchainProvider.provider = window[blockchainProvider.windowKey].currentProvider;
           const IxoKeysafeInpageProvider = window[blockchainProvider.windowKey]
           blockchainProvider.provider = new IxoKeysafeInpageProvider();
         }
