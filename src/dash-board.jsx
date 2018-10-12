@@ -136,7 +136,7 @@ export default class Dashboard extends React.Component {
   
         blockchainProvider.provider.eth.personal.sign(dataInHex, address, "test password!")
         .then(console.log);
-      }, 'base64');
+      });
     }  
   }
 
