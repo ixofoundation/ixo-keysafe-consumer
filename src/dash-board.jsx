@@ -63,7 +63,7 @@ export default class Dashboard extends React.Component {
               alert(`failure callback from perform ledgering HTTP call status: \n${status}, text: \n${text}`)
             })
           }
-        })
+        }, 'base64')
       }      
     })    
   }
@@ -125,7 +125,7 @@ export default class Dashboard extends React.Component {
       this.blockchainProviders.ixo_keysafe.provider.requestSigning(jsonmsg, (error, response)=>{
         alert(`Dashboard handling received response for SIGN response: ${JSON.stringify(response)}, error: ${JSON.stringify(error)}`)
         console.log(`Dashboard handling received response for SIGN response: \n${JSON.stringify(response)}\n, error: \n${JSON.stringify(error)}\n`)
-      })
+      }, 'base64')
       return
     } else {
       this.getEthereumAddressAsync().then(address=>{
