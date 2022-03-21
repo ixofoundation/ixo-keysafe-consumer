@@ -72,7 +72,7 @@ this.ixoKsProvider.getDidDoc((error, response)=>{
   } else {
     // continue with successful response
   }
-}
+})
 ```
 __a successful response looks like this:__
 ```
